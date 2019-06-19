@@ -1,0 +1,19 @@
+create or replace function descontar_saldo(
+	numero_cuenta_p int,
+	monto double precision
+)returns text as
+$BODY$
+	declare mensaje text;
+begin
+	if ((select saldo from cuentas where numero_cuenta = numero_cuenta_p) < monto) then
+		raise 'El saldo es insufuciente';
+	else 
+		mensaje = 'Operacion realizada con exito';
+		UPDATE CUENTAS
+        set saldo = saldo - monto
+        where numero_cuenta = numero_cuenta_p; 
+	end if;
+	return mensaje;
+end;
+$BODY$
+LANGUAGE plpgsql VOLATILE
